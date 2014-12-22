@@ -53,9 +53,6 @@ class QueueConsumer
     private $ok = 0;
     private $delay = 0;
 
-    private $processed = 0;
-
-
     protected $jobsStarted = 0;
 
     protected $workers = array();
@@ -68,6 +65,9 @@ class QueueConsumer
 
     private $listener;
 
+    private $logger;
+
+    private $parentPID;
 
     private $stats = array(
         self::STATUS_OK    => 0,
@@ -124,15 +124,12 @@ class QueueConsumer
             $watchedNames = $driver->listTubes();
         }
 
-        $watched = false;
-
         foreach ($watchedNames as $watchedName) {
-            $tubesWatched = $driver->watch($watchedName);
+            $driver->watch($watchedName);
         }
 
         foreach ($driver->listTubesWatched() as $tube) {
             if (! in_array($tube, $watchedNames)) {
-                var_dump("removing tube $tube");
                 $driver->ignore($tube);
             }
         }
@@ -188,7 +185,6 @@ class QueueConsumer
         }
 
         $this->forks++;
-        list($socketParent, $socketChild) = stream_socket_pair(STREAM_PF_UNIX, STREAM_SOCK_STREAM, STREAM_IPPROTO_IP);
         $pid = pcntl_fork();
 
         if ($pid === -1) {
@@ -196,18 +192,16 @@ class QueueConsumer
             return null;
         } elseif ($pid) {
             // PARENT
-            fclose($socketChild);
-            $this->parentProcessJob($pid, $socketParent, $countJobs);
+            $this->parentProcessJob($pid, $countJobs);
         } else {
             // CHILD
             $driver = $this->createDriver();
             $this->tubeWatchOnly($driver, $tubeNames);
 
-            fclose($socketParent);
             $i = 0;
             while ($i < $countJobs) {
                 $job = $driver->reserve(self::DEFAULT_TIMEOUT);
-                $this->childProcessJob($pid, $job, $socketChild);
+                $this->childProcessJob($pid, $job);
                 $i++;
             }
             exit(0);
@@ -263,7 +257,6 @@ class QueueConsumer
                 break;
             default:
                 throw new Exception('unable to detect output: ' . json_encode($status));
-                break;
         }
 
         $this->handleStatus($job ? $job->getId() : null, $status);
@@ -274,8 +267,6 @@ class QueueConsumer
      */
     private function handleStatus($jobId, $status)
     {
-        $driver = $this->getDriver();
-
         switch ($status) {
             case self::STATUS_OK:
                 $this->notify('JOB:OK', array('id' => $jobId));
@@ -291,33 +282,10 @@ class QueueConsumer
                 break;
             default:
                 throw new Exception('unable to detect output: ' . json_encode($status));
-                break;
         }
-
-        /// $this->stats[$status]++;
-        /// $this->stats['timer'] = $this->queueTimer;
-
-        /// if (++$this->processed % self::BUCKET_SIZE === 0) {
-        ///     $this->notify('BUCKET:FINISHED', $this->stats);
-        /// }
-
-
-        /// if (
-        ///     $this->ok >
-        ///     ($this->getConfigValue('accelerator-security-margin') +
-        ///     $this->getConfigValue('accelerator-needed-tries'))) {
-        ///     $this->ok = $this->getConfigValue('accelerator-security-margin');
-        ///     $this->accelerate();
-        /// }
-
-        /// while ($this->delay > 0) {
-        ///     $this->brake();
-        ///     $this->ok = 0;
-        ///     $this->delay--;
-        /// }
     }
 
-    private function parentProcessJob($pid, $channel, $countJobs)
+    private function parentProcessJob($pid, $countJobs)
     {
         // PARENT PROCESS
         $this->workers[$pid] = $countJobs;
@@ -328,29 +296,20 @@ class QueueConsumer
             $this->childSignalHandler(SIGCHLD, $pid, $this->signalQueue[$pid]);
             unset($this->signalQueue[$pid]);
         }
-
-        // handle every job
-        #while ($countJobs-- > 0) {
-        #    list ($name, $jobId, $status) = explode('#', fgets($channel));
-        #    $status = (int) $status;
-        #    $this->handleStatus($jobId, $status);
-        #}
     }
 
-    private function childProcessJob($pid, $job, $channel)
+    private function childProcessJob($pid, $job)
     {
         // CHILD PROCESS
         // catch them all!!!!!!!
         try {
             ob_start();
 
-            $jobId = null;
             $jobName = null;
 
             if ($job === false) {
                 $status = self::STATUS_EMPTY;
             } else {
-                $jobId = $job->getId();
                 list($jobName, $jobData) = $this->unserializeJob($job->getData());
 
                 // real execution of the job (could throw UnableToGatherCallbackForJobException)
@@ -373,9 +332,6 @@ class QueueConsumer
         }
 
         $this->handleJobFinished($job, $status);
-
-        // notify the status to the parent
-        // fwrite($channel, sprintf("%s#%s#%s\n", $jobName, $jobId, $status));
     }
 
 
