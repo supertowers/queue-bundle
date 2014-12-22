@@ -1,0 +1,30 @@
+## Customize the test machine
+machine:
+
+  timezone:
+    Europe/Madrid # Set the timezone
+
+  php:
+    version: 5.4.6
+
+  services:
+    - beanstalkd
+
+## Customize dependencies
+dependencies:
+  pre:
+    - /usr/bin/beanstalkd:
+       background: true
+    - sed -i 's/^;//' ~/.phpenv/versions/$(phpenv global)/etc/conf.d/xdebug.ini
+
+## Customize test commands
+test:
+  override:
+    - bin/php-tests-coverage
+    - bin/php-lint
+
+  # Upload coverage file to scrutinizer
+  post:
+    - wget https://scrutinizer-ci.com/ocular.phar
+    - php ocular.phar code-coverage:upload --access-token="51dfaa1951cbd1dbfe2c107fae60cefa0860efc96d0b4794bc421605fc6eb83f" --format=php-clover report-coverage-server.xml
+
