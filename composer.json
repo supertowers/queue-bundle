@@ -1,0 +1,31 @@
+{
+    "name" : "supertowers/queue-bundle",
+    "description" : "Queues Manager for Beanstalkd and Symfony2",
+    "type" : "symfony-bundle",
+    "authors" : [{
+        "name" : "Pablo Lopez Torres",
+        "email" : "pablolopeztorres@gmail.com"
+    }],
+    "keywords" : [
+        "queues",
+        "beanstalkd"
+    ],
+    "license": "MIT",
+    "require" : {
+        "pda/pheanstalk": "3.*@dev"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "3.7.*"
+    },
+    "autoload" : {
+        "psr-0" : {
+            "SuperTowers\\QueueBundle" : ""
+        }
+    },
+    "target-dir" : "SuperTowers/QueueBundle",
+    "extra" : {
+        "branch-alias" : {
+            "dev-master" : "1.0-dev"
+        }
+    }
+}
