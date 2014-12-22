@@ -26,5 +26,5 @@ test:
   # Upload coverage file to scrutinizer
   post:
     - wget https://scrutinizer-ci.com/ocular.phar
-    - php ocular.phar code-coverage:upload --access-token="51dfaa1951cbd1dbfe2c107fae60cefa0860efc96d0b4794bc421605fc6eb83f" --format=php-clover report-coverage-server.xml
+    - php ocular.phar code-coverage:upload --format=php-clover report-coverage-server.xml
 
