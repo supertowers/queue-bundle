@@ -1,0 +1,16 @@
+#!/bin/bash
+
+DIRNAME="$(dirname $0)/.."
+RUNNER="$DIRNAME/vendor/squizlabs/php_codesniffer/scripts/phpcbf"
+
+(
+    $RUNNER \
+        --standard=$DIRNAME/ruleset.xml \
+        --ignore=vendor \
+        --ignore=web \
+        $DIRNAME
+    STATUS=$?
+)
+
+exit $STATUS
+
