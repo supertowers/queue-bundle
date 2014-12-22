@@ -366,8 +366,6 @@ class QueueConsumer
             }
 
         } catch (Exception $e) {
-
-
             $this->logException($e);
 
             // mark job to be buried
@@ -498,7 +496,6 @@ class QueueConsumer
         //Make sure we get all of the exited children
         while ($pid > 0) {
             if ($pid && isset($this->workers[$pid])) {
-
                 $this->currentJobsCount -= $this->workers[$pid];
                 unset($this->workers[$pid]);
 
