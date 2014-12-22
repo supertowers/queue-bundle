@@ -3,14 +3,12 @@
 DIRNAME="$(dirname $0)/.."
 RUNNER="$DIRNAME/vendor/squizlabs/php_codesniffer/scripts/phpcs"
 
-(
-    $RUNNER \
-        --standard=$DIRNAME/ruleset.xml \
-        --ignore=vendor \
-        --ignore=web \
-        $DIRNAME
-    STATUS=$?
-)
+$RUNNER \
+    --standard=$DIRNAME/ruleset.xml \
+    --ignore=vendor \
+    --ignore=web \
+    $DIRNAME
+STATUS=$?
 
 exit $STATUS
 

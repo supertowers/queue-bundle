@@ -3,14 +3,12 @@
 DIRNAME="$(dirname $0)/../"
 RUNNER="$DIRNAME/vendor/phpunit/phpunit/phpunit"
 
-(
-    $RUNNER \
-        -d zend.enable_gc=0 \
-        -d memory_limit=2G \
-        -c $DIRNAME \
-        --color
-    STATUS=$?
-)
+$RUNNER \
+    -d zend.enable_gc=0 \
+    -d memory_limit=2G \
+    -c $DIRNAME \
+    --color
+STATUS=$?
 
 exit $STATUS
 

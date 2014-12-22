@@ -3,19 +3,17 @@
 DIRNAME="$(dirname $0)/../"
 RUNNER="$DIRNAME/vendor/phpunit/phpunit/phpunit"
 
-(
-    $RUNNER \
-        -d zend.enable_gc=0 \
-        -d memory_limit=2G \
-        -c $DIRNAME \
-        --color \
-        --coverage-text=report-coverage-server.txt \
-        --coverage-html web/coverage/ \
-        --coverage-clover=report-coverage-server.xml
-    STATUS=$?
-    cat report-coverage-server.txt
-    echo ""
-)
+$RUNNER \
+    -d zend.enable_gc=0 \
+    -d memory_limit=2G \
+    -c $DIRNAME \
+    --color \
+    --coverage-text=report-coverage-server.txt \
+    --coverage-html web/coverage/ \
+    --coverage-clover=report-coverage-server.xml
+STATUS=$?
+cat report-coverage-server.txt
+echo ""
 
 exit $STATUS
 
