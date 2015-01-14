@@ -346,8 +346,9 @@ class QueueConsumer
      */
     public function processJob($job)
     {
-        $pid = null;
-        return $this->childProcessJob($pid, $job);
+        list($jobName, $jobData) = $this->unserializeJob($job->getData());
+        $callback = $this->getConfig()->getCallback($jobName);
+        call_user_func($callback, $jobData);
     }
 
     private function serializeJob($jobName, $parameters, $priority, $delay, $ttr)
