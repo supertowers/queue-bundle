@@ -344,8 +344,10 @@ class QueueConsumer
      * @param mixed $job
      * @return void
      */
-    public function processJob()
+    public function processJob($job)
     {
+        $pid = null;
+        return $this->childProcessJob($pid, $job);
     }
 
     private function serializeJob($jobName, $parameters, $priority, $delay, $ttr)
