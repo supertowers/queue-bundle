@@ -56,7 +56,7 @@ class QueueConfig implements ArrayAccess, ContainerAwareInterface
     const PRIORITY_TOP     = 1000;
     const PRIORITY_URGENT  = 0;
 
-    const CONFIG_FILE = 'app/config/queues.php';
+    const CONFIG_FILE = 'config/queues.php';
 
     /**
      * getCallback
@@ -86,7 +86,9 @@ class QueueConfig implements ArrayAccess, ContainerAwareInterface
     {
         $currentTime = (int) (microtime(true) * 1000);
         if ($this->previousTime + self::TIME_TO_RELOAD_CONFIG < $currentTime) {
-            $filename = __DIR__ . '/../../../../' .  self::CONFIG_FILE;
+            
+            $baseDir = $this->container->get('kernel')->getRootDir();
+            $filename = $baseDir . '/' .  self::CONFIG_FILE;
 
             clearstatcache(true, $filename);
             $modificationTime = filemtime($filename) * 1000;
