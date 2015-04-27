@@ -86,7 +86,6 @@ class QueueConfig implements ArrayAccess, ContainerAwareInterface
     {
         $currentTime = (int) (microtime(true) * 1000);
         if ($this->previousTime + self::TIME_TO_RELOAD_CONFIG < $currentTime) {
-            
             $baseDir = $this->container->get('kernel')->getRootDir();
             $filename = $baseDir . '/' .  self::CONFIG_FILE;
 
