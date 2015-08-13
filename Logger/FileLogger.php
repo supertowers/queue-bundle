@@ -33,19 +33,19 @@ class FileLogger implements QueueLogger
     }
     public function info($message)
     {
-        $this->write(sprintf('[INFO] %s - %s', date('Y-m-d h:i:s'), $message));
+        $this->write(sprintf('[INFO] %s - %s', date('Y-m-d H:i:s'), $message));
     }
     public function notice($message)
     {
-        $this->write(sprintf('[NOTICE] %s - %s', date('Y-m-d h:i:s'), $message));
+        $this->write(sprintf('[NOTICE] %s - %s', date('Y-m-d H:i:s'), $message));
     }
     public function warning($message)
     {
-        $this->write(sprintf('[WARNING] %s - %s', date('Y-m-d h:i:s'), $message));
+        $this->write(sprintf('[WARNING] %s - %s', date('Y-m-d H:i:s'), $message));
     }
     public function error($message)
     {
-        $this->write(sprintf('[ERROR] %s - %s', date('Y-m-d h:i:s'), $message));
+        $this->write(sprintf('[ERROR] %s - %s', date('Y-m-d H:i:s'), $message));
     }
 
     /**
