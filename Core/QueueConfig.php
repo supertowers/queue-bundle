@@ -47,7 +47,7 @@ class QueueConfig implements ArrayAccess, ContainerAwareInterface
     private $data = null;
 
 
-    const TIME_TO_RELOAD_CONFIG = 3000; // 10 secs
+    const TIME_TO_RELOAD_CONFIG = 10; // 10 secs
 
     const PRIORITY_NONE    = 9000;
     const PRIORITY_LOW     = 7000;
@@ -84,13 +84,13 @@ class QueueConfig implements ArrayAccess, ContainerAwareInterface
 
     private function reloadData()
     {
-        $currentTime = (int) (microtime(true) * 1000);
+        $currentTime = time();
         if ($this->previousTime + self::TIME_TO_RELOAD_CONFIG < $currentTime) {
             $baseDir = $this->container->get('kernel')->getRootDir();
             $filename = $baseDir . '/' .  self::CONFIG_FILE;
 
             clearstatcache(true, $filename);
-            $modificationTime = filemtime($filename) * 1000;
+            $modificationTime = filemtime($filename);
             if ($modificationTime !== $this->fileModTime) {
                 $this->data = include($filename);
                 $this->fileModTime = $modificationTime;
