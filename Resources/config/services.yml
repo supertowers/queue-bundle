@@ -3,20 +3,20 @@ services:
     queue.config:
         class: SuperTowers\QueueBundle\Core\QueueConfig
         arguments:
-            - @service_container
+            - '@service_container'
 
     queue.consumer:
         class: SuperTowers\QueueBundle\Core\QueueConsumer
         arguments:
             - [ "%servers.beanstalkd.host%", "%servers.beanstalkd.port%" ]
-            - @queue.config
-            - @queue.logger
+            - '@queue.config'
+            - '@queue.logger'
 
     queue.manager:
         class: SuperTowers\QueueBundle\Core\QueueManager
         arguments:
             - [ "%servers.beanstalkd.host%", "%servers.beanstalkd.port%" ]
-            - @queue.consumer
+            - '@queue.consumer'
 
     queue.logger:
         class: SuperTowers\QueueBundle\Logger\FileLogger
