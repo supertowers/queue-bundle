@@ -63,7 +63,8 @@ class QueueConfig implements ArrayAccess, ContainerAwareInterface
      *
      * @author Pablo Lopez Torres <pablolopeztorres@gmail.com>
      * @param mixed $jobName
-     * @return void
+     * @return callable
+     * @throws UnableToGatherCallbackForJobException
      * @todo pablo - 2014-12-18 : make a config for this
      */
     public function getCallback($jobName)

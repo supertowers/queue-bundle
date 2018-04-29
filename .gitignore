@@ -1,3 +1,4 @@
 /vendor
 /report-coverage-*
 /web/coverage
+/nbproject/private/
